@@ -1,0 +1,12 @@
+# Ignore your virtual environment
+venvAirCommand/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS / editor junk
+.DS_Store
+.vscode/
