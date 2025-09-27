@@ -10,11 +10,11 @@ class BaseGesture(ABC):
     def __init__(self, name: str, cooldown: float = 1.0, activation_delay: float = 0.5):
         self.name = name
         self.cooldown = cooldown
-        self.activation_delay = activation_delay  # Time gesture must be held before executing
+        self.activation_delay = activation_delay # amount of time gesture must be held before executing
         self.last_execution_time = 0
         self.is_active = False
         self.activation_time = 0
-        self.has_activated = False  # Track if gesture has been activated
+        self.has_activated = False # track if gesture has been activated
         
     def can_execute(self) -> bool:
         # check if enough time has passed since last execution
@@ -45,11 +45,11 @@ class BaseGesture(ABC):
         
         duration = self.get_gesture_duration()
         
-        # First execution: wait for activation delay
+        # first exec, wait for delay
         if not self.has_activated:
             return duration >= self.activation_delay
         
-        # Subsequent executions: use cooldown
+        # use cooldown
         return self.can_execute()
     
     def get_gesture_duration(self) -> float:
@@ -60,44 +60,39 @@ class BaseGesture(ABC):
     
     @abstractmethod
     def detect(self, landmarks) -> bool:
-        """
+        
         # detect if this gesture is being performed
         
-        Args:
-            landmarks: MediaPipe hand landmarks
+        # args: landmarks: MediaPipe hand landmarks
             
-        Returns:
-            bool: True if gesture is detected
-        """
+        # returns: bool: True if gesture is detected
+        
         pass
     
     @abstractmethod
     def execute(self) -> bool:
-        """
+        
         # execute the action associated with this gesture
         
-        Returns:
-            bool: True if action was executed successfully
-        """
+        # returns: bool: True if action was executed successfully
+        
         pass
     
     def get_finger_states(self, landmarks) -> List[int]:
-        """
-        Get the state of each finger (1 = extended, 0 = bent)
         
-        Args:
-            landmarks: MediaPipe hand landmarks
+        # get the state of each finger (1 = extended, 0 = bent)
+        
+        # args: landmarks: MediaPipe hand landmarks
             
-        Returns:
-            List[int]: [thumb, index, middle, ring, pinky] states
-        """
+         # returns: List[int]: [thumb, index, middle, ring, pinky] states
+        
         if not landmarks or len(landmarks) < 21:
             return [0, 0, 0, 0, 0]
         
-        # Get key landmark positions
+        # get key landmark positions
         thumb_tip = landmarks[4]
         thumb_ip = landmarks[3]
-        thumb_mcp = landmarks[2]  # Thumb base
+        thumb_mcp = landmarks[2] # thumb base
         
         index_tip = landmarks[8]
         index_pip = landmarks[6]
@@ -117,13 +112,13 @@ class BaseGesture(ABC):
         
         fingers = []
         
-        # Thumb: Check if tip is extended beyond the IP joint
-        # For thumbs up, tip should be significantly above IP joint
+        # check if the thumb tip is extended beyond the IP joint
+        # for thumbs up, tip should be above IP joint
         thumb_extended = thumb_tip.y < thumb_ip.y - 0.02
         fingers.append(1 if thumb_extended else 0)
         
-        # Other fingers: Check if tip is above the PIP joint
-        # For closed fingers, tip should be below or close to PIP joint
+        # other fingers, check if tip is above the PIP joint
+        # for closed fingers, tip should be below or close to PIP joint
         for tip, pip in [(index_tip, index_pip), (middle_tip, middle_pip), 
                         (ring_tip, ring_pip), (pinky_tip, pinky_pip)]:
             finger_extended = tip.y < pip.y - 0.01  # Small tolerance
@@ -132,41 +127,37 @@ class BaseGesture(ABC):
         return fingers
     
     def is_hand_facing_camera(self, landmarks) -> bool:
-        """
-        Check if the hand is in a reasonable position for gesture detection
-        More lenient detection that works with natural hand positions
+        # Check if the hand is in a reasonable position for gesture detection More lenient detection that works with natural hand positions
         
-        Args:
-            landmarks: MediaPipe hand landmarks
+        # Args: landmarks: MediaPipe hand landmarks
             
-        Returns:
-            bool: True if hand is in good position for gesture detection
-        """
+        # Returns: bool: True if hand is in good position for gesture detection
+        
         if not landmarks or len(landmarks) < 21:
             return False
         
-        # Get key points for orientation detection
+        # get key points for orientation detection
         wrist = landmarks[0]
-        middle_mcp = landmarks[9]  # Middle finger base
-        index_mcp = landmarks[5]   # Index finger base
-        ring_mcp = landmarks[13]   # Ring finger base
-        pinky_mcp = landmarks[17]  # Pinky base
+        middle_mcp = landmarks[9] # middle finger base
+        index_mcp = landmarks[5] # index finger base
+        ring_mcp = landmarks[13] # ring finger base
+        pinky_mcp = landmarks[17] # pinky base
         
-        # Calculate hand center (average of finger bases)
+        # calculate hand center (average of finger bases)
         hand_center_x = (index_mcp.x + middle_mcp.x + ring_mcp.x + pinky_mcp.x) / 4
         hand_center_y = (index_mcp.y + middle_mcp.y + ring_mcp.y + pinky_mcp.y) / 4
         
-        # More lenient check: hand should be roughly upright and not too tilted
-        # Check if wrist is reasonably positioned relative to hand center
+        # more lenient check, hand should be roughly upright and not too tilted
+        # check if wrist is reasonably positioned relative to hand center
         wrist_hand_distance = abs(wrist.y - hand_center_y)
         
-        # Check if hand is not too tilted (wrist and hand center should be roughly aligned horizontally)
+        # check if hand is not too tilted (wrist and hand center should be roughly aligned horizontally)
         horizontal_alignment = abs(wrist.x - hand_center_x) < 0.15
         
-        # Check if hand is in a reasonable vertical position (not too high or low)
+        # check if hand is in a reasonable vertical position (not too high or low)
         reasonable_position = 0.1 < hand_center_y < 0.9
         
-        # Check if hand is not too far to the sides
+        # check if hand is not too far to the sides
         reasonable_horizontal = 0.1 < hand_center_x < 0.9
         
         return horizontal_alignment and reasonable_position and reasonable_horizontal

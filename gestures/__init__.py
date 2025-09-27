@@ -1,6 +1,4 @@
-"""
-AirCommand Gesture Recognition System
-"""
+# AirCommand Gesture Recognition System
 
 from .base_gesture import BaseGesture
 from .volume_up_gesture import VolumeUpGesture

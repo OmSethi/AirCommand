@@ -12,28 +12,26 @@ class VolumeDownGesture(BaseGesture):
     def __init__(self):
         super().__init__(
             name="volume_down",
-            cooldown=0.6,  # 600ms delay between volume changes
-            activation_delay=0.2  # 200ms delay before first execution
+            cooldown=0.6, # 600ms delay between volume changes
+            activation_delay=0.2 # 200ms delay before first execution
         )
-        self.volume_step = 5  # Volume decrement per gesture
-        self.min_volume = 0
+        self.volume_step = 5 # volume decrement per gesture
+        self.min_volume = 0 # minimum volume
         
     def detect(self, landmarks) -> bool:
-        """
         # detect thumbs down gesture like 👎 emoji
         # thumbs down: All fingers closed, thumb pointing downward
-        """
         if not landmarks:
             return False
             
         finger_states = self.get_finger_states(landmarks)
-        # Thumbs down: [0, 0, 0, 0, 0] (all fingers closed)
-        # But thumb is extended downward (like 👎 emoji)
-        if finger_states == [0, 0, 0, 0, 0]:  # All fingers closed
-            # Check if thumb is pointing downward (thumb tip below thumb IP)
+        # thumbs down: [0, 0, 0, 0, 0] (all fingers closed)
+        # but thumb is extended downward (like 👎 emoji)
+        if finger_states == [0, 0, 0, 0, 0]: # all fingers closed
+            # check if thumb is pointing downward (thumb tip below thumb IP)
             thumb_tip = landmarks[4]
             thumb_ip = landmarks[3]
-            thumb_pointing_down = thumb_tip.y > thumb_ip.y + 0.01  # More lenient threshold so thumb does not need to be perfectly straight
+            thumb_pointing_down = thumb_tip.y > thumb_ip.y + 0.01 # more lenient threshold so thumb does not need to be perfectly straight
             
             if thumb_pointing_down:
                 return True
@@ -41,9 +39,7 @@ class VolumeDownGesture(BaseGesture):
         return False
     
     def execute(self) -> bool:
-        """
         # execute volume down command with macOS-style overlay
-        """
         if not self.is_ready_to_execute():
             return False
             

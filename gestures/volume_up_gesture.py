@@ -12,27 +12,25 @@ class VolumeUpGesture(BaseGesture):
     def __init__(self):
         super().__init__(
             name="volume_up",
-            cooldown=0.6,  # 600ms delay between volume changes
-            activation_delay=0.2  # 200ms delay before first execution
+            cooldown=0.6, # 600ms delay between volume changes
+            activation_delay=0.2 # 200ms delay before first execution
         )
-        self.volume_step = 5  # volume increment per gesture
+        self.volume_step = 5 # volume increment per gesture
         self.max_volume = 100
         
     def detect(self, landmarks) -> bool:
-        """
-        # detect thumbs up gesture
-        Thumbs up: Only thumb extended upward, all other fingers closed
-        """
+        # detect thumbs up gesture 👍
+        # Thumbs up: Only thumb extended upward, all other fingers closed
         if not landmarks:
             return False
             
         finger_states = self.get_finger_states(landmarks)
         # thumbs up: [1, 0, 0, 0, 0] (only thumb extended)
         if finger_states == [1, 0, 0, 0, 0]:
-            # Additional check: thumb should be pointing upward
+            # additional check: thumb should be pointing upward
             thumb_tip = landmarks[4]
             thumb_ip = landmarks[3]
-            thumb_pointing_up = thumb_tip.y < thumb_ip.y - 0.01  # More lenient threshold so thumb does not need to be perfectly straight
+            thumb_pointing_up = thumb_tip.y < thumb_ip.y - 0.01  # more lenient threshold so thumb does not need to be perfectly straight
             
             if thumb_pointing_up:
                 return True
@@ -40,9 +38,7 @@ class VolumeUpGesture(BaseGesture):
         return False
     
     def execute(self) -> bool:
-        """
         # execute volume up command with macOS-style overlay
-        """
         if not self.is_ready_to_execute():
             return False
             
