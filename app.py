@@ -30,7 +30,7 @@ class AirCommandController:
         
     def run(self):
         """Main application loop"""
-        print("🎯 AirCommand - Hand Gesture Control")
+        print("AirCommand - Hand Gesture Control")
         print("Available gestures:")
         for name, gesture in self.gestures.items():
             print(f"  {gesture.name}: {gesture.__class__.__doc__ or 'No description'}")

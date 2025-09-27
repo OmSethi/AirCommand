@@ -5,11 +5,13 @@ AirCommand Gesture Recognition System
 from .base_gesture import BaseGesture
 from .volume_up_gesture import VolumeUpGesture
 from .volume_down_gesture import VolumeDownGesture
+from .lockscreen_gesture import LockScreenGesture
 
 # Gesture registry - add new gestures here
 AVAILABLE_GESTURES = {
     'volume_up': VolumeUpGesture,
     'volume_down': VolumeDownGesture,
+    'lockscreen': LockScreenGesture,
 }
 
 def get_gesture(gesture_name: str) -> BaseGesture:
