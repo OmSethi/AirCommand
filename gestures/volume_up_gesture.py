@@ -27,16 +27,12 @@ class VolumeUpGesture(BaseGesture):
             return False
             
         finger_states = self.get_finger_states(landmarks)
-        
-        # Debug: Print finger states to see what's being detected
-        # print(f"Finger states: {finger_states}")
-        
         # thumbs up: [1, 0, 0, 0, 0] (only thumb extended)
         if finger_states == [1, 0, 0, 0, 0]:
             # Additional check: thumb should be pointing upward
             thumb_tip = landmarks[4]
             thumb_ip = landmarks[3]
-            thumb_pointing_up = thumb_tip.y < thumb_ip.y - 0.01  # More lenient threshold
+            thumb_pointing_up = thumb_tip.y < thumb_ip.y - 0.01  # More lenient threshold so thumb does not need to be perfectly straight
             
             if thumb_pointing_up:
                 return True

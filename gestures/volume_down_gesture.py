@@ -27,17 +27,13 @@ class VolumeDownGesture(BaseGesture):
             return False
             
         finger_states = self.get_finger_states(landmarks)
-        
-        # Debug: Print finger states to see what's being detected
-        # print(f"Thumbs down finger states: {finger_states}")
-        
         # Thumbs down: [0, 0, 0, 0, 0] (all fingers closed)
         # But thumb is extended downward (like 👎 emoji)
         if finger_states == [0, 0, 0, 0, 0]:  # All fingers closed
             # Check if thumb is pointing downward (thumb tip below thumb IP)
             thumb_tip = landmarks[4]
             thumb_ip = landmarks[3]
-            thumb_pointing_down = thumb_tip.y > thumb_ip.y + 0.01  # More lenient threshold
+            thumb_pointing_down = thumb_tip.y > thumb_ip.y + 0.01  # More lenient threshold so thumb does not need to be perfectly straight
             
             if thumb_pointing_down:
                 return True
